@@ -12,8 +12,7 @@ import pandas
 import sys
 import time
 
-sys.path.insert(0, os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 import signalfx  # noqa
 from signalfx.signalflow import messages, SignalFlowClient  # noqa
 
@@ -38,29 +37,41 @@ def get_data_frame(client, program, start, stop, resolution=None):
         elif isinstance(msg, messages.MetadataMessage):
             metadata[msg.tsid] = msg.properties
 
-    df = pandas.DataFrame.from_dict(data, orient='index')
+    df = pandas.DataFrame.from_dict(data, orient="index")
     df.metadata = metadata
     return df
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     now = int(time.time()) * 1000
 
     parser = argparse.ArgumentParser(
-        description='SignalFx SignalFlow output to Pandas DataFrame')
-    parser.add_argument('--stream-endpoint',
-                        help='SignalFx SignalFlow stream API endpoint',
-                        default='https://stream.signalfx.com')
-    parser.add_argument('-a', '--start', type=int,
-                        help='Start timestamp (in milliseconds)',
-                        default=now - 15 * 60 * 1000)
-    parser.add_argument('-o', '--stop', type=int,
-                        help='End timestamp (in milliseconds)',
-                        default=now - 5 * 60 * 1000)
-    parser.add_argument('-r', '--resolution', type=int,
-                        help='Minimum desired resolution')
-    parser.add_argument('token', help='Your SignalFx API access token')
-    parser.add_argument('program', help='SignalFlow program to execute')
+        description="SignalFx SignalFlow output to Pandas DataFrame"
+    )
+    parser.add_argument(
+        "--stream-endpoint",
+        help="SignalFx SignalFlow stream API endpoint",
+        default="https://stream.signalfx.com",
+    )
+    parser.add_argument(
+        "-a",
+        "--start",
+        type=int,
+        help="Start timestamp (in milliseconds)",
+        default=now - 15 * 60 * 1000,
+    )
+    parser.add_argument(
+        "-o",
+        "--stop",
+        type=int,
+        help="End timestamp (in milliseconds)",
+        default=now - 5 * 60 * 1000,
+    )
+    parser.add_argument(
+        "-r", "--resolution", type=int, help="Minimum desired resolution"
+    )
+    parser.add_argument("token", help="Your SignalFx API access token")
+    parser.add_argument("program", help="SignalFlow program to execute")
     options = parser.parse_args()
 
     client = SignalFlowClient(
@@ -68,5 +79,8 @@ if __name__ == '__main__':
         endpoint=options.stream_endpoint,
     )
 
-    print(get_data_frame(client, options.program, options.start,
-                         options.stop, options.resolution))
+    print(
+        get_data_frame(
+            client, options.program, options.start, options.stop, options.resolution
+        )
+    )
