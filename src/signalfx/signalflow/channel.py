@@ -16,15 +16,17 @@ class _Channel(object):
     Channels are iterable that return messages.StreamMessage instances.
     """
 
-    _CHANNEL_NAME_ALPHABET = (string.ascii_lowercase +
-                              string.ascii_uppercase +
-                              string.digits)
+    _CHANNEL_NAME_ALPHABET = (
+        string.ascii_lowercase + string.ascii_uppercase + string.digits
+    )
     _CHANNEL_NAME_LENGTH = 8
 
     def __init__(self):
-        nonce = ''.join(random.choice(_Channel._CHANNEL_NAME_ALPHABET)
-                        for _ in range(_Channel._CHANNEL_NAME_LENGTH))
-        self._name = 'channel-{0}'.format(nonce)
+        nonce = "".join(
+            random.choice(_Channel._CHANNEL_NAME_ALPHABET)
+            for _ in range(_Channel._CHANNEL_NAME_LENGTH)
+        )
+        self._name = "channel-{0}".format(nonce)
 
     @property
     def name(self):
@@ -34,7 +36,7 @@ class _Channel(object):
         return self
 
     def __str__(self):
-        return 'channel<{0}>'.format(self._name)
+        return "channel<{0}>".format(self._name)
 
     def next(self):
         return self._next()

@@ -13,8 +13,12 @@ class _SignalFlowTransport(object):
     WebSocket connection.
     """
 
-    def __init__(self, token, endpoint=constants.DEFAULT_STREAM_ENDPOINT,
-                 timeout=constants.DEFAULT_TIMEOUT):
+    def __init__(
+        self,
+        token,
+        endpoint=constants.DEFAULT_STREAM_ENDPOINT,
+        timeout=constants.DEFAULT_TIMEOUT,
+    ):
         """Initialize the transport to the given endpoint, using the given
         authorization token."""
         self._token = token

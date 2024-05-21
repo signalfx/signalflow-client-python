@@ -22,56 +22,63 @@ class SSETransport(transport._SignalFlowTransport):
     latency.
     """
 
-    _SIGNALFLOW_ENDPOINT = 'v2/signalflow'
+    _SIGNALFLOW_ENDPOINT = "v2/signalflow"
 
-    def __init__(self, token, endpoint=constants.DEFAULT_STREAM_ENDPOINT,
-                 timeout=constants.DEFAULT_TIMEOUT, compress=True,
-                 proxy_url=None):
+    def __init__(
+        self,
+        token,
+        endpoint=constants.DEFAULT_STREAM_ENDPOINT,
+        timeout=constants.DEFAULT_TIMEOUT,
+        compress=True,
+        proxy_url=None,
+    ):
         super(SSETransport, self).__init__(token, endpoint, timeout)
         pool_args = {
-            'url': self._endpoint,
-            'headers': {
-                'Content-Type': 'text/plain',
-                'X-SF-Token': self._token,
-                'User-Agent': '{} urllib3/{}'.format(version.user_agent,
-                                                     urllib3.__version__)
+            "url": self._endpoint,
+            "headers": {
+                "Content-Type": "text/plain",
+                "X-SF-Token": self._token,
+                "User-Agent": "{} urllib3/{}".format(
+                    version.user_agent, urllib3.__version__
+                ),
             },
-            'timeout': urllib3.Timeout(connect=self._timeout, read=None),
+            "timeout": urllib3.Timeout(connect=self._timeout, read=None),
         }
 
-        if urllib3.util.parse_url(self._endpoint).scheme == 'https':
-            pool_args.update({
-                'cert_reqs': 'CERT_REQUIRED',  # Force certificate check.
-                'ca_certs': certifi.where()    # Path to the Certifi bundle.
-            })
+        if urllib3.util.parse_url(self._endpoint).scheme == "https":
+            pool_args.update(
+                {
+                    "cert_reqs": "CERT_REQUIRED",  # Force certificate check.
+                    "ca_certs": certifi.where(),  # Path to the Certifi bundle.
+                }
+            )
 
         if proxy_url:
             proxy_manager = urllib3.poolmanager.proxy_from_url(proxy_url)
-            endpoint = pool_args.pop('url')
+            endpoint = pool_args.pop("url")
             self._http = proxy_manager.connection_from_url(
-                    endpoint, pool_kwargs=pool_args)
+                endpoint, pool_kwargs=pool_args
+            )
         else:
-            self._http = urllib3.connectionpool.connection_from_url(
-                    **pool_args)
+            self._http = urllib3.connectionpool.connection_from_url(**pool_args)
 
     def __str__(self):
-        return 'sse+{0}'.format(self._endpoint)
+        return "sse+{0}".format(self._endpoint)
 
     def close(self):
         self._http.close()
 
     def _post(self, url, fields=None, body=None):
-        r = self._http.request_encode_url('POST', url,
-                                          fields=fields, body=body,
-                                          preload_content=False)
+        r = self._http.request_encode_url(
+            "POST", url, fields=fields, body=body, preload_content=False
+        )
         if r.status != 200:
             try:
-                if r.headers['Content-Type'] == 'application/json':
+                if r.headers["Content-Type"] == "application/json":
                     rbody = json.loads(r.read())
                     raise errors.SignalFlowException(
-                            r.status,
-                            rbody.get('message'),
-                            rbody.get('errorType'))
+                        r.status, rbody.get("message"), rbody.get("errorType")
+                    )
                 raise errors.SignalFlowException(r.status)
             finally:
                 r.close()
@@ -79,44 +86,45 @@ class SSETransport(transport._SignalFlowTransport):
         return sseclient.SSEClient(r)
 
     def execute(self, program, params):
-        url = '{endpoint}/{path}/execute'.format(
-            endpoint=self._endpoint,
-            path=SSETransport._SIGNALFLOW_ENDPOINT)
-        return SSEComputationChannel(self._post(url, fields=params,
-                                                body=program))
+        url = "{endpoint}/{path}/execute".format(
+            endpoint=self._endpoint, path=SSETransport._SIGNALFLOW_ENDPOINT
+        )
+        return SSEComputationChannel(self._post(url, fields=params, body=program))
 
     def preflight(self, program, params):
-        url = '{endpoint}/{path}/preflight'.format(
-            endpoint=self._endpoint,
-            path=SSETransport._SIGNALFLOW_ENDPOINT)
-        return SSEComputationChannel(self._post(url, fields=params,
-                                                body=program))
+        url = "{endpoint}/{path}/preflight".format(
+            endpoint=self._endpoint, path=SSETransport._SIGNALFLOW_ENDPOINT
+        )
+        return SSEComputationChannel(self._post(url, fields=params, body=program))
 
     def start(self, program, params):
-        url = '{endpoint}/{path}/start'.format(
-            endpoint=self._endpoint,
-            path=SSETransport._SIGNALFLOW_ENDPOINT)
+        url = "{endpoint}/{path}/start".format(
+            endpoint=self._endpoint, path=SSETransport._SIGNALFLOW_ENDPOINT
+        )
         self._post(url, fields=params, body=program)
 
     def attach(self, handle, params):
-        url = '{endpoint}/{path}/{handle}/attach'.format(
+        url = "{endpoint}/{path}/{handle}/attach".format(
             endpoint=self._endpoint,
             path=SSETransport._SIGNALFLOW_ENDPOINT,
-            handle=handle)
+            handle=handle,
+        )
         return SSEComputationChannel(self._post(url, fields=params))
 
     def keepalive(self, handle):
-        url = '{endpoint}/{path}/{handle}/keepalive'.format(
+        url = "{endpoint}/{path}/{handle}/keepalive".format(
             endpoint=self._endpoint,
             path=SSETransport._SIGNALFLOW_ENDPOINT,
-            handle=handle)
+            handle=handle,
+        )
         self._port(url)
 
     def stop(self, handle, params):
-        url = '{endpoint}/{path}/{handle}/stop'.format(
+        url = "{endpoint}/{path}/{handle}/stop".format(
             endpoint=self._endpoint,
             path=SSETransport._SIGNALFLOW_ENDPOINT,
-            handle=handle)
+            handle=handle,
+        )
         self._port(url, fields=params)
 
 

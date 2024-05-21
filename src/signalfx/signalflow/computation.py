@@ -181,15 +181,19 @@ class Computation(object):
                 if not self._current_batch_message:
                     self._current_batch_message = message
                     self._current_batch_count = 1
-                elif (message.logical_timestamp_ms ==
-                        self._current_batch_message.logical_timestamp_ms):
+                elif (
+                    message.logical_timestamp_ms
+                    == self._current_batch_message.logical_timestamp_ms
+                ):
                     self._current_batch_message.add_data(message.data)
                     self._current_batch_count += 1
                 else:
                     self._batch_count_detected = True
 
-                if (self._batch_count_detected and
-                        self._current_batch_count == self._expected_batches):
+                if (
+                    self._batch_count_detected
+                    and self._current_batch_count == self._expected_batches
+                ):
                     yield self._get_batch_to_yield()
                 continue
 
@@ -208,20 +212,20 @@ class Computation(object):
         """Process an information message received from the computation."""
         # Extract the output resolution from the appropriate message, if
         # it's present.
-        contents = message.get('contents', None)
-        if message['messageCode'] == 'JOB_RUNNING_RESOLUTION':
-            self._resolution = contents['resolutionMs']
-        elif message['messageCode'] == 'FETCH_NUM_TIMESERIES':
-            self._num_input_timeseries += int(message['numInputTimeSeries'])
-        elif message['messageCode'] == 'FIND_MATCHED_NO_TIMESERIES':
+        contents = message.get("contents", None)
+        if message["messageCode"] == "JOB_RUNNING_RESOLUTION":
+            self._resolution = contents["resolutionMs"]
+        elif message["messageCode"] == "FETCH_NUM_TIMESERIES":
+            self._num_input_timeseries += int(message["numInputTimeSeries"])
+        elif message["messageCode"] == "FIND_MATCHED_NO_TIMESERIES":
             self._find_matched_no_timeseries = True
-        elif message['messageCode'] == 'FIND_LIMITED_RESULT_SET':
+        elif message["messageCode"] == "FIND_LIMITED_RESULT_SET":
             self._find_limited_resultset = True
-            self._find_matched_size = contents['matchedSize']
-            self._find_limit_size = contents['limitSize']
-        elif message['messageCode'] == 'GROUPBY_MISSING_PROPERTY':
+            self._find_matched_size = contents["matchedSize"]
+            self._find_limit_size = contents["limitSize"]
+        elif message["messageCode"] == "GROUPBY_MISSING_PROPERTY":
             self._group_by_missing_property = True
-            self._group_by_missing_properties = contents['propertyNames']
+            self._group_by_missing_properties = contents["propertyNames"]
 
     def _get_batch_to_yield(self):
         to_yield = self._current_batch_message

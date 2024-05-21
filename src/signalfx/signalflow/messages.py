@@ -11,22 +11,21 @@ class StreamMessage(object):
 
     @staticmethod
     def decode(mtype, payload):
-        if mtype == 'control-message':
+        if mtype == "control-message":
             return ControlMessage.decode(payload)
-        if mtype == 'message':
+        if mtype == "message":
             return InfoMessage.decode(payload)
-        if mtype == 'event':
+        if mtype == "event":
             return EventMessage.decode(payload)
-        if mtype == 'metadata':
+        if mtype == "metadata":
             return MetadataMessage.decode(payload)
-        if mtype == 'expired-tsid':
+        if mtype == "expired-tsid":
             return ExpiredTsIdMessage.decode(payload)
-        if mtype == 'data':
+        if mtype == "data":
             return DataMessage.decode(payload)
-        if mtype == 'error':
+        if mtype == "error":
             return ErrorMessage.decode(payload)
-        _logger.warn('Unsupported event type; ignoring %s: %s!',
-                     mtype, payload)
+        _logger.warn("Unsupported event type; ignoring %s: %s!", mtype, payload)
         return None
 
 
@@ -43,18 +42,17 @@ class ControlMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        if payload['event'] == 'STREAM_START':
+        if payload["event"] == "STREAM_START":
             return StreamStartMessage.decode(payload)
-        if payload['event'] == 'JOB_START':
+        if payload["event"] == "JOB_START":
             return JobStartMessage.decode(payload)
-        if payload['event'] == 'JOB_PROGRESS':
+        if payload["event"] == "JOB_PROGRESS":
             return JobProgressMessage.decode(payload)
-        if payload['event'] == 'CHANNEL_ABORT':
+        if payload["event"] == "CHANNEL_ABORT":
             return ChannelAbortMessage.decode(payload)
-        if payload['event'] == 'END_OF_CHANNEL':
+        if payload["event"] == "END_OF_CHANNEL":
             return EndOfChannelMessage.decode(payload)
-        _logger.warn('Unsupported control message %s; ignoring!',
-                     payload['event'])
+        _logger.warn("Unsupported control message %s; ignoring!", payload["event"])
         return None
 
 
@@ -66,7 +64,7 @@ class StreamStartMessage(ControlMessage):
 
     @staticmethod
     def decode(payload):
-        return StreamStartMessage(payload['timestampMs'])
+        return StreamStartMessage(payload["timestampMs"])
 
 
 class JobStartMessage(ControlMessage):
@@ -83,7 +81,7 @@ class JobStartMessage(ControlMessage):
 
     @staticmethod
     def decode(payload):
-        return JobStartMessage(payload['timestampMs'], payload['handle'])
+        return JobStartMessage(payload["timestampMs"], payload["handle"])
 
 
 class JobProgressMessage(ControlMessage):
@@ -102,7 +100,7 @@ class JobProgressMessage(ControlMessage):
 
     @staticmethod
     def decode(payload):
-        return JobProgressMessage(payload['timestampMs'], payload['progress'])
+        return JobProgressMessage(payload["timestampMs"], payload["progress"])
 
 
 class ChannelAbortMessage(ControlMessage):
@@ -121,8 +119,7 @@ class ChannelAbortMessage(ControlMessage):
 
     @staticmethod
     def decode(payload):
-        return ChannelAbortMessage(payload['timestampMs'],
-                                   payload['abortInfo'])
+        return ChannelAbortMessage(payload["timestampMs"], payload["abortInfo"])
 
 
 class EndOfChannelMessage(ControlMessage):
@@ -134,7 +131,7 @@ class EndOfChannelMessage(ControlMessage):
 
     @staticmethod
     def decode(payload):
-        return EndOfChannelMessage(payload['timestampMs'])
+        return EndOfChannelMessage(payload["timestampMs"])
 
 
 class InfoMessage(StreamMessage):
@@ -159,7 +156,7 @@ class InfoMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        return InfoMessage(payload['logicalTimestampMs'], payload['message'])
+        return InfoMessage(payload["logicalTimestampMs"], payload["message"])
 
 
 class EventMessage(StreamMessage):
@@ -197,10 +194,12 @@ class EventMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        return EventMessage(payload['tsId'],
-                            payload['timestampMs'],
-                            payload['metadata'],
-                            payload['properties'])
+        return EventMessage(
+            payload["tsId"],
+            payload["timestampMs"],
+            payload["metadata"],
+            payload["properties"],
+        )
 
 
 class MetadataMessage(StreamMessage):
@@ -224,7 +223,7 @@ class MetadataMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        return MetadataMessage(payload['tsId'], payload['properties'])
+        return MetadataMessage(payload["tsId"], payload["properties"])
 
 
 class ExpiredTsIdMessage(StreamMessage):
@@ -243,7 +242,7 @@ class ExpiredTsIdMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        return ExpiredTsIdMessage(payload['tsId'])
+        return ExpiredTsIdMessage(payload["tsId"])
 
 
 class DataMessage(StreamMessage):
@@ -252,7 +251,7 @@ class DataMessage(StreamMessage):
 
     def __init__(self, logical_timestamp_ms, data):
         self._logical_timestamp_ms = logical_timestamp_ms
-        self._data = dict((datum['tsId'], datum['value']) for datum in data)
+        self._data = dict((datum["tsId"], datum["value"]) for datum in data)
 
     @property
     def logical_timestamp_ms(self):
@@ -269,7 +268,7 @@ class DataMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        return DataMessage(payload['logicalTimestampMs'], payload['data'])
+        return DataMessage(payload["logicalTimestampMs"], payload["data"])
 
 
 class ErrorMessage(StreamMessage):
@@ -287,4 +286,4 @@ class ErrorMessage(StreamMessage):
 
     @staticmethod
     def decode(payload):
-        return ErrorMessage(payload['errors'])
+        return ErrorMessage(payload["errors"])

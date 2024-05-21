@@ -50,6 +50,7 @@ path = "src/signalfx/__about__.py"
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "black",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
@@ -62,6 +63,7 @@ cov = [
   "test-cov",
   "cov-report",
 ]
+format = "black {args:src/signalfx tests}"
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
@@ -91,3 +93,7 @@ exclude_lines = [
   "if __name__ == .__main__.:",
   "if TYPE_CHECKING:",
 ]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
