@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 import signalfx  # noqa
-from signalfx.signalflow import messages  # noqa
+from signalfx.signalflow import messages, SignalFlowClient  # noqa
 
 
 if __name__ == '__main__':
@@ -24,13 +24,16 @@ if __name__ == '__main__':
     parser.add_argument('token', help='Your SignalFx API access token')
     parser.add_argument('program', help='SignalFlow program to execute')
     options = parser.parse_args()
-    client = signalfx.SignalFx(stream_endpoint=options.stream_endpoint)
-    flow = client.signalflow(options.token)
+
+    client = SignalFlowClient(
+        token=options.token,
+        endpoint=options.stream_endpoint,
+    )
 
     try:
         # Execute the computation and iterate over the message stream
         print('Requesting computation: {0}'.format(options.program))
-        c = flow.execute(options.program)
+        c = client.execute(options.program)
         print('Waiting for data...')
         for msg in c.stream():
             if isinstance(msg, messages.DataMessage):
@@ -53,5 +56,5 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print(' Detaching from computation...')
     finally:
-        flow.close()
+        client.close()
     print('Done.')

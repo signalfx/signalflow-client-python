@@ -15,7 +15,7 @@ import time
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 import signalfx  # noqa
-from signalfx.signalflow import messages  # noqa
+from signalfx.signalflow import messages, SignalFlowClient  # noqa
 
 
 def get_data_frame(client, program, start, stop, resolution=None):
@@ -62,7 +62,11 @@ if __name__ == '__main__':
     parser.add_argument('token', help='Your SignalFx API access token')
     parser.add_argument('program', help='SignalFlow program to execute')
     options = parser.parse_args()
-    client = signalfx.SignalFx(stream_endpoint=options.stream_endpoint)
-    flow = client.signalflow(options.token)
-    print(get_data_frame(flow, options.program, options.start,
+
+    client = SignalFlowClient(
+        token=options.token,
+        endpoint=options.stream_endpoint,
+    )
+
+    print(get_data_frame(client, options.program, options.start,
                          options.stop, options.resolution))
