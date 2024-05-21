@@ -44,7 +44,8 @@ Source = "https://github.com/signalfx/signalflow-client-python"
 packages = ["src/signalfx"]
 
 [tool.hatch.version]
-path = "src/signalfx/__about__.py"
+path = "src/signalfx/version.py"
+regex = '^version = "(.*)"$'
 
 [tool.hatch.envs.default]
 dependencies = [
