@@ -1,0 +1,100 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "signalflow-client-python"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "Apache-2.0"
+keywords = []
+authors = [
+  { name = "Splunk", email = "splunk-oss@splunk.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "certifi",
+  "protobuf>=3.0.0,<4.21.0",
+  "pyformance>=0.3.1",
+  "requests>=2.7.0",
+  "sseclient-py>=1.4",
+  "urllib3>=1.15.1",
+  "six>=1.6.0",
+  "ws4py>=0.4.1",
+]
+
+[project.urls]
+Documentation = "https://github.com/signalfx/signalflow-client-python#readme"
+Issues = "https://github.com/signalfx/signalflow-client-python/issues"
+Source = "https://github.com/signalfx/signalflow-client-python"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/signalfx"]
+
+[tool.hatch.version]
+path = "src/signalfx/version.py"
+regex = '^version = "(.*)"$'
+
+[tool.hatch.envs.default]
+dependencies = [
+  "coverage[toml]>=6.5",
+  "pytest",
+  "black",
+]
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+]
+cov = [
+  "test-cov",
+  "cov-report",
+]
+format = "black {args:src tests examples}"
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.types]
+dependencies = [
+  "mypy>=1.0.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/signalfx tests}"
+
+[tool.coverage.run]
+source_pkgs = ["signalfx", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/signalfx/__about__.py",
+]
+
+[tool.coverage.paths]
+signalfx = ["src/signalfx", "*/signalflow-client-python/src/signalfx"]
+tests = ["tests", "*/signalflow-client-python/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
