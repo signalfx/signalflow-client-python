@@ -1,0 +1,31 @@
+default:
+  image: 'cimg/python:3.11'
+
+stages:
+  - build
+  - deploy
+
+build-job:
+  stage: build
+  script:
+    - pip install hatch
+    - hatch build
+    - shasum -a 256 dist/* > dist/checksums.txt
+  artifacts:
+      paths:
+        - dist/
+  only:
+    - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
+  except:
+    - branches
+
+deploy-job:
+  stage: deploy
+  script:
+    - pip install hatch
+    - hatch config set pypi-token.pypi $PYPI_PASSWORD
+    - hatch publish --non-interactive
+  only:
+    - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
+  except:
+    - branches
