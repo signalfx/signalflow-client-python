@@ -25,6 +25,8 @@ deploy-job:
     - pip install hatch
     - hatch config set pypi-token.pypi $PYPI_PASSWORD
     - hatch publish --non-interactive
+  needs:
+    - build-job
   only:
     - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
   except:
