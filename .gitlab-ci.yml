@@ -23,8 +23,9 @@ deploy-job:
   stage: deploy
   script:
     - pip install hatch
-    - hatch config set pypi-token.pypi $PYPI_PASSWORD
-    - hatch publish --non-interactive
+    - export HATCH_INDEX_USER=__token__
+    - export HATCH_INDEX_AUTH=$PYPI_PASSWORD
+    - hatch publish
   needs:
     - build-job
   only:
