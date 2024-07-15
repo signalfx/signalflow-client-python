@@ -23,9 +23,7 @@ deploy-job:
   stage: deploy
   script:
     - pip install hatch keyrings.alt
-    - export HATCH_INDEX_USER=__token__
-    - export HATCH_INDEX_AUTH=$PYPI_PASSWORD
-    - hatch publish
+    - hatch publish --no-interactive
   needs:
     - build-job
   only:
