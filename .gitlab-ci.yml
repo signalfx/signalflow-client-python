@@ -23,7 +23,7 @@ deploy-job:
   stage: deploy
   script:
     - pip install hatch keyrings.alt
-    - hatch publish --no-interactive
+    - hatch --no-interactive publish
   needs:
     - build-job
   only:
