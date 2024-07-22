@@ -112,6 +112,7 @@ line.
        finally:
            client.close()
        print("Done.")
+   ```
 
 2. Run the Python script, specifying values for the streaming endpoint (optional), the API access token, and the SignalFlow program.
 
