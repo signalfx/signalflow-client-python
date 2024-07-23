@@ -8,6 +8,7 @@
 **Table of Contents**
 
 - [Installation](#installation)
+- [Run a SignalFlow computation](#run-a-signalflow-computation)
 - [License](#license)
 
 ## Installation
@@ -22,24 +23,20 @@ pip install signalflow-client-python
 ## Run a SignalFlow computation
 
 The following example allows you run a SignalFlow computation from the command
-line.
+line. For additional examples, see the [examples](./examples) directory.
 
-1. Create a file called ``signalflow_demo.py`` that includes the following
-   content:
+1. Install the `signalfx` package:
+
+   ```console
+   pip install signalfx
+   ```
+
+2. Create a `.py` file that includes the following content:
 
    ```python
    #!/usr/bin/env python
 
-   # Copyright (C) 2017 SignalFx, Inc. All rights reserved.
-   #
-   # A simple example showing how to execute a SignalFx SignalFlow computation
-   # from Python and dump its data, metadata and event output to the console.
-
    import argparse
-   import os
-   import sys
-
-   sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
    import signalfx  # noqa
    from signalfx.signalflow import messages, SignalFlowClient  # noqa
 
@@ -114,12 +111,12 @@ line.
        print("Done.")
    ```
 
-2. Run the Python script, specifying values for the streaming endpoint (optional), the API access token, and the SignalFlow program.
+3. Run the Python script, specifying values for the streaming endpoint (optional), the API access token, and the SignalFlow program.
 
    For example:
 
    ```console
-   python signalflow_demo.py --stream-endpoint https://stream.us0.signalfx.com <api-token> "data('cpu.utilization').mean().publish()"
+   python <file-name>.py --stream-endpoint https://stream.us0.signalfx.com <api-token> "data('sf.org.num.orguser').publish()"
    ```
 
 ## License
