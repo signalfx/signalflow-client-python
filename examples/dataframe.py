@@ -7,12 +7,9 @@
 # convert it into a Pandas DataFrame for analysis.
 
 import argparse
-import os
 import pandas
-import sys
 import time
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 import signalfx  # noqa
 from signalfx.signalflow import messages, SignalFlowClient  # noqa
 
