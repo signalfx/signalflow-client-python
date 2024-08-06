@@ -27,10 +27,7 @@ build-job:
 
 oss-scan:
   stage: verify
-  rules:
-    - if: '$CI_COMMIT_REF_NAME == "main"'
   extends: .oss-scan
-  tags: []
   when: manual
 
 deploy-job:
