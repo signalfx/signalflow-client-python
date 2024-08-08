@@ -66,6 +66,12 @@ class StreamStartMessage(ControlMessage):
     def decode(payload):
         return StreamStartMessage(payload["timestampMs"])
 
+    def __str__(self):
+        return "{0}@{1}".format(
+            "stream_start",
+            self.timestamp_ms
+        )
+
 
 class JobStartMessage(ControlMessage):
     """Message received when the SignalFlow computation has started."""
@@ -82,6 +88,13 @@ class JobStartMessage(ControlMessage):
     @staticmethod
     def decode(payload):
         return JobStartMessage(payload["timestampMs"], payload["handle"])
+
+    def __str__(self):
+        return "{0}@{1}: {2}".format(
+            "job_start",
+            self.timestamp_ms,
+            self._handle
+        )
 
 
 class JobProgressMessage(ControlMessage):
@@ -102,6 +115,13 @@ class JobProgressMessage(ControlMessage):
     def decode(payload):
         return JobProgressMessage(payload["timestampMs"], payload["progress"])
 
+    def __str__(self):
+        return "{0}@{1}: {2}".format(
+            "job_progress",
+            self.timestamp_ms,
+            self.progress
+        )
+
 
 class ChannelAbortMessage(ControlMessage):
     """Message received when the computation aborted before its defined stop
@@ -121,6 +141,13 @@ class ChannelAbortMessage(ControlMessage):
     def decode(payload):
         return ChannelAbortMessage(payload["timestampMs"], payload["abortInfo"])
 
+    def __str__(self):
+        return "{0}@{1}: {2}".format(
+            "channel_abort",
+            self.timestamp_ms,
+            self.abort_info
+        )
+
 
 class EndOfChannelMessage(ControlMessage):
     """Message received when the computation completes normally. No further
@@ -132,6 +159,12 @@ class EndOfChannelMessage(ControlMessage):
     @staticmethod
     def decode(payload):
         return EndOfChannelMessage(payload["timestampMs"])
+
+    def __str__(self):
+        return "{0}@{1}".format(
+            "end_of_channel",
+            self.timestamp_ms,
+        )
 
 
 class InfoMessage(StreamMessage):
@@ -157,6 +190,13 @@ class InfoMessage(StreamMessage):
     @staticmethod
     def decode(payload):
         return InfoMessage(payload["logicalTimestampMs"], payload["message"])
+
+    def __str__(self):
+        return "{0}@{1}: {2}".format(
+            "info",
+            self._logical_timestamp_ms,
+            self.message,
+        )
 
 
 class EventMessage(StreamMessage):
@@ -201,6 +241,19 @@ class EventMessage(StreamMessage):
             payload["properties"],
         )
 
+    def __str__(self):
+        return "{0}@{1}: {2}: {3}".format(
+            "event",
+            self.timestamp_ms,
+            self._metadata,
+            ", ".join(
+                [
+                    "{0}: {1}".format(k, v)
+                    for k, v in self.properties.items()
+                ]
+            ),
+        )
+
 
 class MetadataMessage(StreamMessage):
     """Message containing metadata information about an output metric or event
@@ -225,6 +278,18 @@ class MetadataMessage(StreamMessage):
     def decode(payload):
         return MetadataMessage(payload["tsId"], payload["properties"])
 
+    def __str__(self):
+        return "{0} for {1}:\n  {2}".format(
+            "metadata",
+            self.tsid,
+            "\n  ".join(
+                [
+                    "{0}: {1}".format(k, v)
+                    for k, v in self.properties.items()
+                ]
+            ),
+        )
+
 
 class ExpiredTsIdMessage(StreamMessage):
     """Message informing us that an output timeseries is no longer part of the
@@ -243,6 +308,9 @@ class ExpiredTsIdMessage(StreamMessage):
     @staticmethod
     def decode(payload):
         return ExpiredTsIdMessage(payload["tsId"])
+
+    def __str__(self):
+        return "{0} for {1}".format("expired_tsid", self._tsid)
 
 
 class DataMessage(StreamMessage):
@@ -270,6 +338,18 @@ class DataMessage(StreamMessage):
     def decode(payload):
         return DataMessage(payload["logicalTimestampMs"], payload["data"])
 
+    def __str__(self):
+        return "{0}@{1}: {2}".format(
+            "data",
+            self.logical_timestamp_ms,
+            ", ".join(
+                [
+                    "{0}: {1}".format(k, v)
+                    for k, v in self.data.items()
+                ]
+            ),
+        )
+
 
 class ErrorMessage(StreamMessage):
     """Message received when the computation encounters errors during its
@@ -287,3 +367,7 @@ class ErrorMessage(StreamMessage):
     @staticmethod
     def decode(payload):
         return ErrorMessage(payload["errors"])
+
+    def __str__(self):
+        return "{0}: {1}".format("error", self._errors)
+
