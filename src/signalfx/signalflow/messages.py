@@ -67,10 +67,7 @@ class StreamStartMessage(ControlMessage):
         return StreamStartMessage(payload["timestampMs"])
 
     def __str__(self):
-        return "{0}@{1}".format(
-            "stream_start",
-            self.timestamp_ms
-        )
+        return "{0}@{1}".format("stream_start", self.timestamp_ms)
 
 
 class JobStartMessage(ControlMessage):
@@ -90,11 +87,7 @@ class JobStartMessage(ControlMessage):
         return JobStartMessage(payload["timestampMs"], payload["handle"])
 
     def __str__(self):
-        return "{0}@{1}: {2}".format(
-            "job_start",
-            self.timestamp_ms,
-            self._handle
-        )
+        return "{0}@{1}: {2}".format("job_start", self.timestamp_ms, self._handle)
 
 
 class JobProgressMessage(ControlMessage):
@@ -116,11 +109,7 @@ class JobProgressMessage(ControlMessage):
         return JobProgressMessage(payload["timestampMs"], payload["progress"])
 
     def __str__(self):
-        return "{0}@{1}: {2}".format(
-            "job_progress",
-            self.timestamp_ms,
-            self.progress
-        )
+        return "{0}@{1}: {2}".format("job_progress", self.timestamp_ms, self.progress)
 
 
 class ChannelAbortMessage(ControlMessage):
@@ -143,9 +132,7 @@ class ChannelAbortMessage(ControlMessage):
 
     def __str__(self):
         return "{0}@{1}: {2}".format(
-            "channel_abort",
-            self.timestamp_ms,
-            self.abort_info
+            "channel_abort", self.timestamp_ms, self.abort_info
         )
 
 
@@ -246,12 +233,7 @@ class EventMessage(StreamMessage):
             "event",
             self.timestamp_ms,
             self._metadata,
-            ", ".join(
-                [
-                    "{0}: {1}".format(k, v)
-                    for k, v in self.properties.items()
-                ]
-            ),
+            ", ".join(["{0}: {1}".format(k, v) for k, v in self.properties.items()]),
         )
 
 
@@ -282,12 +264,7 @@ class MetadataMessage(StreamMessage):
         return "{0} for {1}:\n  {2}".format(
             "metadata",
             self.tsid,
-            "\n  ".join(
-                [
-                    "{0}: {1}".format(k, v)
-                    for k, v in self.properties.items()
-                ]
-            ),
+            "\n  ".join(["{0}: {1}".format(k, v) for k, v in self.properties.items()]),
         )
 
 
@@ -342,12 +319,7 @@ class DataMessage(StreamMessage):
         return "{0}@{1}: {2}".format(
             "data",
             self.logical_timestamp_ms,
-            ", ".join(
-                [
-                    "{0}: {1}".format(k, v)
-                    for k, v in self.data.items()
-                ]
-            ),
+            ", ".join(["{0}: {1}".format(k, v) for k, v in self.data.items()]),
         )
 
 
@@ -370,4 +342,3 @@ class ErrorMessage(StreamMessage):
 
     def __str__(self):
         return "{0}: {1}".format("error", self._errors)
-
