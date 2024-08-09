@@ -7,8 +7,7 @@
 
 import argparse
 
-import signalfx  # noqa
-from signalfx.signalflow import messages, SignalFlowClient  # noqa
+from signalfx.signalflow import SignalFlowClient
 
 
 def main():
@@ -35,7 +34,7 @@ def main():
         for msg in c.stream():
             print(f"Message: {msg}")
     except KeyboardInterrupt:
-        print(" Detaching from computation...")
+        print("Detaching from computation...")
     finally:
         client.close()
     print("Done.")
