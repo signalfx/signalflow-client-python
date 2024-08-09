@@ -7,8 +7,7 @@
 
 import argparse
 
-import signalfx  # noqa
-from signalfx.signalflow import messages, SignalFlowClient  # noqa
+from signalfx.signalflow import SignalFlowClient
 
 
 def main():

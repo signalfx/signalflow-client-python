@@ -38,8 +38,7 @@ line. For additional examples, see the [examples](./examples) directory.
 
 import argparse
 
-import signalfx
-from signalfx.signalflow import messages, SignalFlowClient
+from signalfx.signalflow import SignalFlowClient
 
 
 def main():
