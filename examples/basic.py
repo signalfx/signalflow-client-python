@@ -35,7 +35,7 @@ def main():
         for msg in c.stream():
             print(f"Message: {msg}")
     except KeyboardInterrupt:
-        print(" Detaching from computation...")
+        print("Detaching from computation...")
     finally:
         client.close()
     print("Done.")
