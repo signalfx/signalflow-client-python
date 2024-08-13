@@ -11,6 +11,30 @@
 - [Run a SignalFlow computation](#run-a-signalflow-computation)
 - [License](#license)
 
+SignalFlow is the SignalFx real-time analytics computation language. The SignalFlow
+API allows SignalFx users to execute real-time streaming analytics computations on
+the SignalFx platform. For more information, see the Splunk Observability Cloud
+developer documentation:
+
+* [SignalFlow Overview](https://dev.splunk.com/observability/docs/signalflow/)
+* [SignalFlow API Reference](https://dev.splunk.com/observability/reference/api/signalflow/latest)
+
+The SignalFlow Python library is a client that opens a connection to SignalFx,
+allowing you to execute SignalFlow programs against the back end and then stream
+data back to the client.
+
+The following SignalFlow program returns the current number of users in your
+organization:
+
+```console
+data('sf.org.num.orguser').publish()
+```
+
+> [!TIP]
+> The SignalFx UI uses the SignalFlow language to produce charts, graphs,
+> and alerts. You can reuse SignalFlow programs from the UI in the code that you
+> write using the SignalFlow Python client library.
+
 ## Installation
 
 To install the SignalFlow Python client library, open a terminal and run the
