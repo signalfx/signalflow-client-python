@@ -19,9 +19,9 @@ developer documentation:
 * [SignalFlow Overview](https://dev.splunk.com/observability/docs/signalflow/)
 * [SignalFlow API Reference](https://dev.splunk.com/observability/reference/api/signalflow/latest)
 
-The SignalFlow Python library is a client you can use to send SignalFlow programs
-to the SignalFx back end. The client opens a connection to the back end and sends
-a stream of information produced by the SignalFlow program.
+The SignalFlow Python library is a client that opens a connection to SignalFx,
+allowing you to execute SignalFlow programs against the back end and then stream
+data back to the client.
 
 The following SignalFlow program returns the current number of users in your
 organization:
