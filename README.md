@@ -30,6 +30,7 @@ organization:
 data('sf.org.num.orguser').publish()
 ```
 
+> [!TIP]
 > The SignalFx UI uses the SignalFlow language to produce charts, graphs,
 > and alerts. You can reuse SignalFlow programs from the UI in the code that you
 > write using the SignalFlow Python client library.
