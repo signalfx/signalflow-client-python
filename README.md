@@ -25,10 +25,10 @@ pip install signalflow-client-python
 The following example allows you run a SignalFlow computation from the command
 line. For additional examples, see the [examples](./examples) directory.
 
-1. Install the `signalfx` package:
+1. Install the `signalflow-client-python` package:
 
    ```console
-   pip install signalfx
+   pip install signalflow-client-python
    ```
 
 2. Create a `.py` file that includes the following content:
