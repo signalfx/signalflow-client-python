@@ -1,6 +1,6 @@
 # Copyright (C) 2015-2016 SignalFx, Inc. All rights reserved.
 
 name = "signalfx"
-version = "1.3.2"
+version = "1.3.3"
 
 user_agent = "signalflow-client-python/" + version
