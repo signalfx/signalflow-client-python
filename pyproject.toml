@@ -28,7 +28,6 @@ dependencies = [
   "certifi",
   "protobuf>=3.18.3,<4.25.8",
   "pyformance>=0.3.1",
-  "requests>=2.32.2",
   "sseclient-py>=1.4",
   "urllib3>=1.26.19",
   "six>=1.6.0",
