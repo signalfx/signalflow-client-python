@@ -26,8 +26,6 @@ classifiers = [
 ]
 dependencies = [
   "certifi",
-  "protobuf>=4.25.8,<5.0.0",
-  "pyformance>=0.3.1",
   "sseclient-py>=1.4",
   "urllib3>=2.5.0",
   "six>=1.6.0",
