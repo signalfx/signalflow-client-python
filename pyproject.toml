@@ -27,7 +27,7 @@ classifiers = [
 dependencies = [
   "certifi",
   "sseclient-py>=1.4",
-  "urllib3>=2.5.0",
+  "urllib3>=2.6.0",
   "six>=1.6.0",
   "ws4py>=0.4.1",
 ]
