@@ -7,7 +7,7 @@ name = "signalflow-client-python"
 dynamic = ["version"]
 description = ''
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = "Apache-2.0"
 keywords = []
 authors = [
@@ -16,8 +16,6 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -27,7 +25,7 @@ classifiers = [
 dependencies = [
   "certifi",
   "sseclient-py>=1.4",
-  "urllib3>=2.6.3",
+  "urllib3>=2.7.0",
   "six>=1.6.0",
   "ws4py>=0.4.1",
 ]
@@ -64,7 +62,7 @@ cov = [
 format = "black {args:src tests examples}"
 
 [[tool.hatch.envs.all.matrix]]
-python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+python = ["3.10", "3.11", "3.12"]
 
 [tool.hatch.envs.types]
 dependencies = [
@@ -94,4 +92,4 @@ exclude_lines = [
 
 [tool.black]
 line-length = 88
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+target-version = ['py310', 'py311', 'py312']
