@@ -2,11 +2,14 @@
 # Copyright (C) 2020 Splunk, Inc. All rights reserved.
 
 import base64
+import certifi
 import json
 import logging
 from six.moves import queue
+import ssl
 import struct
 import threading
+from urllib.parse import urlsplit, urlunsplit
 import ws4py
 from ws4py.client.threadedclient import WebSocketClient
 import zlib
@@ -36,18 +39,28 @@ class WebSocketTransport(transport._SignalFlowTransport, WebSocketClient):
         timeout=constants.DEFAULT_TIMEOUT,
         compress=True,
         proxy_url=None,
+        ca_certs=None,
     ):
         if proxy_url:
             raise NotImplementedError("Websocket transport cannot be proxied!")
 
-        ws_endpoint = "{0}/{1}".format(
-            endpoint.replace("http", "ws", 1),
-            WebSocketTransport._SIGNALFLOW_WEBSOCKET_ENDPOINT,
+        endpoint_url = urlsplit(endpoint)
+        if endpoint_url.scheme not in ("https", "wss"):
+            raise ValueError("WebSocket endpoints must use https:// or wss://")
+        ws_endpoint = urlunsplit(
+            endpoint_url._replace(
+                scheme="wss",
+                path="{0}/{1}".format(
+                    endpoint_url.path.rstrip("/"),
+                    WebSocketTransport._SIGNALFLOW_WEBSOCKET_ENDPOINT,
+                ),
+            )
         )
 
         transport._SignalFlowTransport.__init__(self, token, ws_endpoint, timeout)
 
         self._compress = compress
+        self._ca_certs = certifi.where() if ca_certs is None else ca_certs
         self._server_time = None
         self._connected = False
         self._error = None
@@ -74,8 +87,7 @@ class WebSocketTransport(transport._SignalFlowTransport, WebSocketClient):
         }
         request.update(params)
 
-        self._channels[channel.name] = channel
-        self._send(request)
+        self._send(request, channel=channel)
         return channel
 
     def preflight(self, program, params):
@@ -89,8 +101,7 @@ class WebSocketTransport(transport._SignalFlowTransport, WebSocketClient):
         }
         request.update(params)
 
-        self._channels[channel.name] = channel
-        self._send(request)
+        self._send(request, channel=channel)
         return channel
 
     def start(self, program, params):
@@ -109,8 +120,7 @@ class WebSocketTransport(transport._SignalFlowTransport, WebSocketClient):
         }
         request.update(params)
 
-        self._channels[channel.name] = channel
-        self._send(request)
+        self._send(request, channel=channel)
         return channel
 
     def detach(self, channel):
@@ -132,18 +142,33 @@ class WebSocketTransport(transport._SignalFlowTransport, WebSocketClient):
         request.update(params)
         self._send(request)
 
-    def _send(self, request):
+    def _send(self, request, channel=None):
         with self._connection_cv:
             if not self._connected:
                 # Clear any previous error state before attempting to
                 # reconnect.
                 self._error = None
-                WebSocketClient.__init__(self, self._endpoint, heartbeat_freq=None)
-                self.connect()
+                WebSocketClient.__init__(
+                    self,
+                    self._endpoint,
+                    heartbeat_freq=None,
+                    # ws4py disables hostname checks when cert_reqs is absent.
+                    ssl_options={
+                        "cert_reqs": ssl.CERT_REQUIRED,
+                        "ca_certs": self._ca_certs,
+                    },
+                )
+                try:
+                    self.connect()
+                except Exception:
+                    self.close_connection()
+                    raise
             while not self._connected and not self._error:
                 self._connection_cv.wait()
             if not self._connected:
                 raise self._error
+            if channel is not None:
+                self._channels[channel.name] = channel
         self.send(json.dumps(request))
 
     def opened(self):
@@ -275,6 +300,12 @@ class WebSocketTransport(transport._SignalFlowTransport, WebSocketClient):
         reconnection."""
         # TODO(mpetazzoni): ws4py >= 0.3.5 only?
         _logger.debug("WebSocket error: %s; will reconnect.", error)
+
+    def terminate(self):
+        # ws4py calls closed() before cleaning up the old socket and stream.
+        # Finish that cleanup before another thread can initialize a reconnect.
+        with self._connection_cv:
+            WebSocketClient.terminate(self)
 
     def closed(self, code, reason=None):
         """Handler called when the WebSocket is closed. Status code 1000

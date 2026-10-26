@@ -9,6 +9,7 @@
 
 - [Installation](#installation)
 - [Run a SignalFlow computation](#run-a-signalflow-computation)
+- [TLS certificates](#tls-certificates)
 - [License](#license)
 
 SignalFlow is the SignalFx real-time analytics computation language. The SignalFlow
@@ -106,6 +107,29 @@ if __name__ == "__main__":
    ```console
    python <file-name>.py --stream-endpoint https://stream.us0.signalfx.com <api-token> "data('sf.org.num.orguser').publish()"
    ```
+
+## TLS certificates
+
+The default WebSocket transport requires an `https://` or `wss://` endpoint.
+It checks the server's certificate chain and hostname before sending your token.
+The client uses the CA bundle from `certifi` by default. Keep `certifi` up to date
+to receive changes to the trusted certificate authorities.
+
+For a private deployment, pass the path to a PEM CA bundle with `ca_certs`:
+
+```python
+client = SignalFlowClient(
+    token=api_token,
+    endpoint="https://stream.example.com",
+    ca_certs="/path/to/ca-bundle.pem",
+)
+```
+
+This bundle replaces the default CA bundle. Include any public CA certificates
+that the deployment also needs. The client requires certificate and hostname
+checks with either bundle, including when it reconnects. The `ca_certs` option
+also works with the Server-Sent Events transport. Custom transport factories
+must accept this keyword when the caller supplies it.
 
 ## License
 

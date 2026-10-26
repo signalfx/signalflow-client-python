@@ -27,7 +27,7 @@ dependencies = [
   "sseclient-py>=1.4",
   "urllib3>=2.7.0",
   "six>=1.6.0",
-  "ws4py>=0.4.1",
+  "ws4py>=0.6.0",
 ]
 
 [project.urls]
@@ -47,6 +47,8 @@ dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
   "black",
+  "trustme>=1.2.1",
+  "websockets>=14",
 ]
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
