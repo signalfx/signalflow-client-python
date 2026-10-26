@@ -31,6 +31,7 @@ class SSETransport(transport._SignalFlowTransport):
         timeout=constants.DEFAULT_TIMEOUT,
         compress=True,
         proxy_url=None,
+        ca_certs=None,
     ):
         super(SSETransport, self).__init__(token, endpoint, timeout)
         pool_args = {
@@ -49,7 +50,7 @@ class SSETransport(transport._SignalFlowTransport):
             pool_args.update(
                 {
                     "cert_reqs": "CERT_REQUIRED",  # Force certificate check.
-                    "ca_certs": certifi.where(),  # Path to the Certifi bundle.
+                    "ca_certs": certifi.where() if ca_certs is None else ca_certs,
                 }
             )
 

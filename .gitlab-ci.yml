@@ -30,6 +30,16 @@ oss-scan:
   extends: .oss-scan
   when: manual
 
+test-job:
+  stage: verify
+  image: 'cimg/python:${PYTHON_VERSION}'
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ['3.10', '3.11', '3.12', '3.13', '3.14', '3.15']
+  script:
+    - pip install hatch
+    - hatch run test
+
 deploy-job:
   stage: deploy
   script:
@@ -37,6 +47,7 @@ deploy-job:
     - hatch --no-interactive publish
   needs:
     - build-job
+    - test-job
   only:
     - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
   except:

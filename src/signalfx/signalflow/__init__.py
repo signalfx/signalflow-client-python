@@ -22,8 +22,12 @@ class SignalFlowClient(object):
         transport=ws.WebSocketTransport,
         compress=True,
         proxy_url=None,
+        ca_certs=None,
     ):
-        self._transport = transport(token, endpoint, timeout, compress, proxy_url)
+        transport_options = {} if ca_certs is None else {"ca_certs": ca_certs}
+        self._transport = transport(
+            token, endpoint, timeout, compress, proxy_url, **transport_options
+        )
         self._computations = set([])
 
     def __enter__(self):
