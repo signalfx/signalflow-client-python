@@ -35,7 +35,7 @@ test-job:
   image: 'cimg/python:${PYTHON_VERSION}'
   parallel:
     matrix:
-      - PYTHON_VERSION: ['3.10', '3.11', '3.12']
+      - PYTHON_VERSION: ['3.10', '3.11', '3.12', '3.13', '3.14', '3.15']
   script:
     - pip install hatch
     - hatch run test
